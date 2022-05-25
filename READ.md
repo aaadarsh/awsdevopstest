@@ -1,45 +1,43 @@
-Globals
-------------
-Node. js Global Objects are the objects that are available in all modules. 
-Global Objects are built-in objects that are part of the JavaScript and can be 
-used directly in the application without importing any particular module.
+# nodejs-express-on-aws-ec2
 
-__dirname
-__filename
-exports
-require()
-module
-**process
+This repo hosts the source code for my YouTube tutorial on CI/CD from Github to an AWS EC2 instance via CodePipeline and CodeDeploy (https://www.youtube.com/watch?v=Buh3GjHPmjo). This tutorial uses a node.js express app as an example for the demo.
 
+I also created a video to talk about how to fix some of the common CodeDeploy failures I have run into (https://www.youtube.com/watch?v=sXZVkOH6hrA). Below are a couple of examples:
 
-The events_file.js file here is to demonstrate how events module work and how eventEmitter class of events module is used and works
+```
+ApplicationStop failed with exit code 1
+```
 
-lodash.js file is used to demonstrate how lodash works 
+```
+The overall deployment failed because too many individual instances failed deployment, too few healthy instances are available for deployment, or some instances in your deployment group are experiencing problems.
+```
 
------------------------------------- 
-localhost:5000/courses/:courseID
+===========================
 
-localhost:5000/courses?name=adarsh&age=20   //this whole thing is URL we can parse it to find host, path, params and query string
+EC2 script on creation to install the CodeDeploy Agent:
 
-1.  /courses -- is the url(if taken from the request object)/path(if taken from URL parsing)
+```
+#!/bin/bash
+sudo yum -y update
+sudo yum -y install ruby
+sudo yum -y install wget
+cd /home/ec2-user
+wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install
+sudo chmod +x ./install
+sudo ./install auto
+```
 
-2.  courseID is "params" or parameters of the url or route parameter
-//usually used when we need to use an ID or filter/find one product
+Check if CodeDeploy agent is running:
+```
+sudo service codedeploy-agent status
+```
 
-3.  everything after the question mark(?) is called query string parameters or URL parameters
-//query strings are mostly used to limit and sort the incoming responses
+Location for CodeDeploy logs:
+```
+/opt/codedeploy-agent/deployment-root/deployment-logs/codedeploy-agent-deployments.log
+```
 
-middlewares
---------------
-- app.use(middleware)         //how middlewares be used 
-
-- app.use([middleware1, middleware2])     //more than one middleware can be used
-
-1. app.use(express.static('./public'))      //this rernders all the static files from public folder
-
-2. app.use(express.urlencoded({extended: false}))   //makes the form data available
-
-3. app.use(bodyparser.json())       //parse json data
-
-Routing
----------------
+Uninstall CodeDeploy Agent:
+```
+sudo yum erase codedeploy-agent
+```
